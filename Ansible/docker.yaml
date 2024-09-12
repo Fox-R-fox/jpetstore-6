@@ -1,58 +1,27 @@
-- name: Docker build and push playbook
-  hosts: 43.204.38.39  # Specify the target host
+- name: docker build and push
+  hosts: 43.204.38.39  # Replace with the hostname or IP address of your target server
   become: yes  # Run tasks with sudo privileges
-
-  vars:
-    dockerhub_username: "foxe03"  # Define your Docker Hub username
-    dockerhub_password: "Ankita@0303"  # Define your Docker Hub password
 
   tasks:
     - name: Update apt package cache
       apt:
-        update_cache: yes
-
-    - name: Ensure Docker is installed
-      apt:
-        name: docker.io
-        state: present
-
-    - name: Ensure Python Docker module is installed
-      pip:
-        name: docker
-        state: present
+        update_cache: yes   
 
     - name: Build Docker Image
-      community.docker.docker_image:
-        name: petstore
-        build:
-          path: /home/ubuntu/jpetstore-6  # Path to Dockerfile
-          tag: latest
-        state: present
+      command: docker build -t petstore .
+      args:
+        chdir: /var/lib/jenkins/workspace/petstore
 
-    - name: Tag Docker Image
-      community.docker.docker_image:
-        name: foxe03/petstore
-        tag: latest
-        source: petstore:latest
-        state: present
+    - name: tag image
+      command: docker tag petstore:latest harshitgupta21/petstore:latest 
 
     - name: Log in to Docker Hub
       community.docker.docker_login:
         registry_url: https://index.docker.io/v1/
-        username: "{{ dockerhub_username }}"
-        password: "{{ dockerhub_password }}"
+        username: foxe03
+        password: Ankita@0303
+    - name: Push image
+      command: docker push foxe03/petstore:latest
 
-    - name: Push Docker Image
-      community.docker.docker_image:
-        name: foxe03/petstore
-        tag: latest
-        push: yes
-        state: present
-
-    - name: Run Docker Container
-      community.docker.docker_container:
-        name: pet1
-        image: foxe03/petstore:latest
-        state: started
-        ports:
-          - "8085:8080"
+    - name: Run container
+      command: docker run -d --name pet1 -p 8081:8080 foxe03/petstore:latest
