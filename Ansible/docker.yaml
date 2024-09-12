@@ -3,8 +3,8 @@
   become: yes  # Run tasks with sudo privileges
 
   vars:
-    dockerhub_username: "your_dockerhub_username"  # Define your Docker Hub username
-    dockerhub_password: "your_dockerhub_password"  # Define your Docker Hub password
+    dockerhub_username: "foxe03"  # Define your Docker Hub username
+    dockerhub_password: "Ankita@0303"  # Define your Docker Hub password
 
   tasks:
     - name: Update apt package cache
