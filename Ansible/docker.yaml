@@ -1,5 +1,5 @@
 - name: Docker build and push playbook
-  hosts: localhost  # Use 'localhost' if running on the same machine
+  hosts: 43.204.38.39   # Use 'localhost' if running on the same machine
   become: yes  # Run tasks with sudo privileges
 
   tasks:
