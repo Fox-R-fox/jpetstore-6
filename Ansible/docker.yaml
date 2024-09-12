@@ -1,22 +1,31 @@
 - name: Docker build and push playbook
-  hosts: 43.204.38.39   # Use 'localhost' if running on the same machine
+  hosts: 43.204.38.39  # Specify the target host
   become: yes  # Run tasks with sudo privileges
+
+  vars:
+    dockerhub_username: "your_dockerhub_username"  # Define your Docker Hub username
+    dockerhub_password: "your_dockerhub_password"  # Define your Docker Hub password
 
   tasks:
     - name: Update apt package cache
       apt:
-        update_cache: yes   
+        update_cache: yes
 
     - name: Ensure Docker is installed
       apt:
         name: docker.io
         state: present
 
+    - name: Ensure Python Docker module is installed
+      pip:
+        name: docker
+        state: present
+
     - name: Build Docker Image
       community.docker.docker_image:
         name: petstore
         build:
-          path: /home/ubuntu/jpetstore-6  # Updated path
+          path: /home/ubuntu/jpetstore-6  # Path to Dockerfile
           tag: latest
         state: present
 
@@ -38,6 +47,7 @@
         name: foxe03/petstore
         tag: latest
         push: yes
+        state: present
 
     - name: Run Docker Container
       community.docker.docker_container:
